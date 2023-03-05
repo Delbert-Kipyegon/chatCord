@@ -3,7 +3,7 @@ const chatForm = document.getElementById('chat-form');
 const chatMessages = document.querySelector('.chat-messages');
 const roomName = document.getElementById('room-name');
 const userList = document.getElementById('users');
-
+const leaveChatbtn = document.getElementById('leave-btn')
 
 // username and group from url 
 const {username, room} = Qs.parse(location.search, {
@@ -45,8 +45,10 @@ chatForm.addEventListener('submit', (e) =>{
 });
 
 
+
+
 // TO DOM 
-//send mess age 
+//send message 
 
 function outputMessage(message){
     const div = document.createElement('div');
@@ -72,3 +74,13 @@ function outputRoomUsers(users){
     `;
     
 }
+
+
+//Prompt the user before leave chat room
+document.getElementById('leave-btn').addEventListener('click', () => {
+    const leaveRoom = confirm('Are you sure you want to leave the chatroom?');
+    if (leaveRoom) {
+      window.location = '../index.html';
+    } else {
+    }
+  });

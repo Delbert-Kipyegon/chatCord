@@ -3,7 +3,7 @@ const path = require('path');
 const http = require('http');
 const socketio = require('socket.io');
 const formatMessage = require('./utils/messages');
-const {userJoin, getCurrentUser,getRoomUsers,userLeave} = require('./utils/users');
+const {userJoin, getCurrentUser,getRoomUsers,userLeave, userRemove} = require('./utils/users');
 
 
 const app = express();
@@ -43,6 +43,31 @@ io.on('connection', socket =>{
 
         const user = getCurrentUser(socket.id);
         io.to(user.room).emit('message', formatMessage(user.username, msg));
+
+        // check profanity 
+        const badWords = [ 'shit', 'puny', 'shite'];
+
+        function checkProfanity(msg) {
+            const words = msg.toLowerCase().split(' ');
+            const foundBadWords = words.filter(word => badWords.includes(word));
+            return foundBadWords.length > 0;
+          }
+        
+        const isBadWord = checkProfanity(msg);  
+
+        if (isBadWord){
+            // userLeave(socket.id);
+             // Assuming your socket.io server instance is stored in a variable called `io`
+            //  let removedUserDeets = userRemove(socket.id);
+            //  console.log(removedUserDeets);
+            //  io.to(removedUserDeets.room).emit(`${removedUserDeets.username} was removed`, removedUserDeets.username);
+            //  io.sockets.connected[removedUserDeets.id].leave(removedUserDeets.room);
+            
+        }
+
+        console.log(msg);
+
+
     })
 
     //user left
