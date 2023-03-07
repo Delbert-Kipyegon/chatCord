@@ -5,6 +5,7 @@ const socketio = require('socket.io');
 const formatMessage = require('./utils/messages');
 const {userJoin, getCurrentUser,getRoomUsers,userLeave, userRemove} = require('./utils/users');
 const EventEmitter = require('events');
+const axios = require('axios');
 
 EventEmitter.setMaxListeners(20); 
 
@@ -36,11 +37,15 @@ io.on('connection', socket =>{
     socket.emit('message', formatMessage(botName,'Welcome to the group'));
     
     // check profanity 
-    function containsProfanityWords(msg) {
-        const badWords = ['shit', 'puny', 'shite'];
-        const words = msg.toLowerCase().split(' ');
-        const foundBadWords = words.filter((word) => badWords.includes(word));
-        return foundBadWords.length > 0;
+    // function containsProfanityWords(msg) {
+    //     const badWords = ['shit', 'puny', 'shite'];
+    //     const words = msg.toLowerCase().split(' ');
+    //     const foundBadWords = words.filter((word) => badWords.includes(word));
+    //     return foundBadWords.length > 0;
+    //   }
+    async function containsProfanityWords(msg) {
+        const response = await axios.get(`https://www.purgomalum.com/service/containsprofanity?text=${msg}`);
+        return response.data;
       }
     
 
@@ -58,7 +63,7 @@ io.on('connection', socket =>{
                 'message',
                 formatMessage(botName, `${user.username} was removed`)
               );
-
+            
               io.to(user.room).emit('roomUsers', {
                 room: user.room,
                 users: getRoomUsers(user.room),

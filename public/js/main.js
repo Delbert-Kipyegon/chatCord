@@ -30,7 +30,11 @@ socket.on('message', message =>{
     chatMessages.scrollTop = chatMessages.scrollHeight;
 });
 
-socket.on()
+
+// redirect to index page upon disconnection
+socket.on('disconnect', () => {
+    window.location.href = 'index.html';
+  });
 
 chatForm.addEventListener('submit', (e) =>{
     e.preventDefault();
