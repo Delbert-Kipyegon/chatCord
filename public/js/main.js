@@ -30,6 +30,8 @@ socket.on('message', message =>{
     chatMessages.scrollTop = chatMessages.scrollHeight;
 });
 
+socket.on()
+
 chatForm.addEventListener('submit', (e) =>{
     e.preventDefault();
 

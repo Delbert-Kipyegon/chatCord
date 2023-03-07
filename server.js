@@ -4,7 +4,9 @@ const http = require('http');
 const socketio = require('socket.io');
 const formatMessage = require('./utils/messages');
 const {userJoin, getCurrentUser,getRoomUsers,userLeave, userRemove} = require('./utils/users');
+const EventEmitter = require('events');
 
+EventEmitter.setMaxListeners(20); 
 
 const app = express();
 const server = http.createServer(app);
@@ -12,7 +14,7 @@ const io = socketio(server);
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-const botName = 'chat bot'
+const botName = 'chat bot';
 
 //client connection pass data
 io.on('connection', socket =>{
@@ -31,11 +33,15 @@ io.on('connection', socket =>{
         })
     });
 
-    
-
     socket.emit('message', formatMessage(botName,'Welcome to the group'));
-
     
+    // check profanity 
+    function containsProfanityWords(msg) {
+        const badWords = ['shit', 'puny', 'shite'];
+        const words = msg.toLowerCase().split(' ');
+        const foundBadWords = words.filter((word) => badWords.includes(word));
+        return foundBadWords.length > 0;
+      }
     
 
     // take chat from client
@@ -44,32 +50,27 @@ io.on('connection', socket =>{
         const user = getCurrentUser(socket.id);
         io.to(user.room).emit('message', formatMessage(user.username, msg));
 
-        // check profanity 
-        const badWords = [ 'shit', 'puny', 'shite'];
+        if (containsProfanityWords(msg)) {
+            const user = userLeave(socket.id);
+      
+            if (user) {
+              io.to(user.room).emit(
+                'message',
+                formatMessage(botName, `${user.username} was removed`)
+              );
 
-        function checkProfanity(msg) {
-            const words = msg.toLowerCase().split(' ');
-            const foundBadWords = words.filter(word => badWords.includes(word));
-            return foundBadWords.length > 0;
+              io.to(user.room).emit('roomUsers', {
+                room: user.room,
+                users: getRoomUsers(user.room),
+              });
+
+               // Disconnect the socket after it has been removed
+                 socket.disconnect();
+            }
           }
-        
-        const isBadWord = checkProfanity(msg);  
+        });
 
-        if (isBadWord){
-            // userLeave(socket.id);
-             // Assuming your socket.io server instance is stored in a variable called `io`
-            //  let removedUserDeets = userRemove(socket.id);
-            //  console.log(removedUserDeets);
-            //  io.to(removedUserDeets.room).emit(`${removedUserDeets.username} was removed`, removedUserDeets.username);
-            //  io.sockets.connected[removedUserDeets.id].leave(removedUserDeets.room);
-            
-        }
-
-        console.log(msg);
-
-
-    })
-
+    
     //user left
     socket.on('disconnect', () =>{
 
@@ -84,9 +85,6 @@ io.on('connection', socket =>{
             users: getRoomUsers(user.room)
         })
     }
-
-        
-
     });
 
 });
