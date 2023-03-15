@@ -53,44 +53,6 @@ io.on('connection', socket =>{
         return response.data;
       }
     
-
-    // take chat from client
-    // socket.on('chatMessage', async (msg) =>{
-
-    //     const user = getCurrentUser(socket.id);
-    //     io.to(user.room).emit('message', formatMessage(user.username, msg));
-
-
-    //     // console.log(containsProfanityWords(msg))
-
-    //     // console.log(isBadWord);
-
-    //     const isBadWord = await containsProfanityWords(msg);
-
-    //     if (isBadWord) {
-
-    //         console.log(response)
-    //         const user = userLeave(socket.id);
-      
-    //         if (user) {
-    //           io.to(user.room).emit(
-    //             'message',
-    //             formatMessage(botName, `${user.username} was removed`)
-    //           );
-            
-    //           io.to(user.room).emit('roomUsers', {
-    //             room: user.room,
-    //             users: getRoomUsers(user.room),
-    //           });
-
-    //            // Disconnect the socket after it has been removed
-    //              socket.disconnect();
-    //         }
-    //       }
-    //     });
-
-
-
         const MAX_BAD_WORDS = 3; // Maximum number of bad words allowed
 
 const chatMessageHandler = (socket, io, botName) => {
