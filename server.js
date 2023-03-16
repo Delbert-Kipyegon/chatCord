@@ -16,7 +16,7 @@ const io = socketio(server);
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-const botName = 'chat bot';
+const botName = 'Admin';
 
 //client connection pass data
 io.on('connection', socket =>{
@@ -39,13 +39,8 @@ io.on('connection', socket =>{
     
     // check profanity 
    
-   
     async function containsProfanityWords(msg) {
-        const localBadWords = ['you are a donkey', 'wewe ni punda', 'you are a dog', 'wewe ni mbwa', 'you are a monkey',
-                               'wewe ni nyani', 'you are a cow', 'wewe ni ng"ombe', 'you think like a sheep', 'unafikiria kama kondoo', 
-                               'you are mad', 'umechizi', 'you eat like a pig', 'unakula kama nguruwe', 'umenona kama nguruwe',
-                               'shenzi','poko','kuma','firwa','shoga','msenge','tomba','pumbu','mkundu','matako','mpumbavu',
-                               'uume','haga','fala','mboro','deki','senye','dinya','basha','khanithi','malaya','makende'];
+        const localBadWords = ['shit','motherfucker', 'wtf','bastard', 'shithead','cunt','bloody','nigga','negro'];
         const words = msg.toLowerCase().split(' ');
         const foundBadWords = words.filter((word) => localBadWords.includes(word));
       
@@ -100,8 +95,6 @@ const chatMessageHandler = (socket, io, botName) => {
 
 chatMessageHandler(socket, io, botName);
 
-
-    
     //user left
     socket.on('disconnect', () =>{
 
